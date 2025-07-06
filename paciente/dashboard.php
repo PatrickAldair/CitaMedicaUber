@@ -50,6 +50,7 @@ $docs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </header>
 
 <div class="container">
+  <div id="mensajeCita" class="alert alert-success text-center d-none" role="alert"></div>
   <div id="menu" class="mb-3">
     <label for="filtro" class="form-label fw-bold">Especialidad:</label>
     <select id="filtro" class="form-select">
@@ -67,11 +68,31 @@ $docs = $stmt->fetchAll(PDO::FETCH_ASSOC);
        style="height: 80vh;"></div>
 </div>
 
+<div class="modal fade" id="modalCita" tabindex="-1" aria-labelledby="modalCitaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="formCita" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalCitaLabel">Agendar Cita</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <label for="fechaHora" class="form-label">Selecciona fecha y hora:</label>
+        <input type="datetime-local" id="fechaHora" class="form-control" required>
+        <input type="hidden" id="doctorId">
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Confirmar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/main.js"></script>
-</body>
-</html>
 <script>
+
 if (navigator.geolocation) {
     navigator.geolocation.watchPosition(function (position) {
         let lat = position.coords.latitude;
@@ -89,3 +110,5 @@ if (navigator.geolocation) {
     alert("Tu navegador no soporta geolocalización.");
 }
 </script>
+</body>
+</html>

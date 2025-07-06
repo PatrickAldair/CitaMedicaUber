@@ -17,14 +17,14 @@ $citas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard – Doctor</title>
+  <title>Dashboard Doctor</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body style="background-color: #e6f7ff; padding-top: 80px; font-family: 'Segoe UI', sans-serif;">
 
 <div style="position: fixed; top: 0; width: 100%; background-color: #00aaff; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 1000;">
   <h2 style="margin: 0;">Dr. <?= htmlspecialchars($_SESSION['usuario']['nombres']) ?></h2>
-  <a href="../logout.php" class="btn btn-light btn-sm">Cerrar sesión</a>
+  <a href="../logout.php" class="btn btn-light btn-sm">Cerrar sesiÃ³n</a>
 </div>
 
 <div class="container" style="max-width: 900px; margin-top: 30px;">
