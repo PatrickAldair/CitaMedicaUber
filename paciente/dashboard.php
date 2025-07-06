@@ -1,0 +1,91 @@
+<?php
+session_start(); 
+if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'paciente') 
+  header('Location: ../login.php');
+
+require '../db.php';
+$stmt = $pdo->query("SELECT id,nombres,apellidos,especialidad,lat,lng FROM usuarios WHERE tipo='doctor'");
+$docs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Paciente</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>
+    body {
+      background: #e6f7ff;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    header {
+      background-color: #00aaff;
+      color: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    #menu {
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+    }
+    #map {
+      border: 2px solid #cdeffd;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0, 120, 150, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+<header class="d-flex justify-content-between align-items-center">
+  <h2 class="m-0">Hola, <?= htmlspecialchars($_SESSION['usuario']['nombres']) ?></h2>
+  <div>
+    <a href="../logout.php" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
+    <a href="notificaciones.php" class="btn btn-light btn-sm">Notificaciones</a>
+  </div>
+</header>
+
+<div class="container">
+  <div id="menu" class="mb-3">
+    <label for="filtro" class="form-label fw-bold">Especialidad:</label>
+    <select id="filtro" class="form-select">
+      <option value="">Todas</option>
+      <?php foreach (array_unique(array_column($docs, 'especialidad')) as $e): ?>
+        <option value="<?= htmlspecialchars($e) ?>"><?= htmlspecialchars($e) ?></option>
+      <?php endforeach; ?>
+    </select>
+  </div>
+
+  <div id="map"
+       data-lat="<?= $_SESSION['usuario']['lat'] ?>"
+       data-lng="<?= $_SESSION['usuario']['lng'] ?>"
+       data-doctores='<?= json_encode($docs) ?>'
+       style="height: 80vh;"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
+<script>
+if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(function (position) {
+        let lat = position.coords.latitude;
+        let lon = position.coords.longitude;
+
+        fetch("actualizar_ubicacion.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `latitud=${lat}&longitud=${lon}`
+        });
+    });
+} else {
+    alert("Tu navegador no soporta geolocalización.");
+}
+</script>

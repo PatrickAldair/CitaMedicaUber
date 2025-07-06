@@ -1,0 +1,8 @@
+body {
+    background: #e0f1fd; /* azul suave */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+}
