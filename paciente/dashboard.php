@@ -4,7 +4,15 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'paciente')
   header('Location: ../login.php');
 
 require '../db.php';
-$stmt = $pdo->query("SELECT id,nombres,apellidos,especialidad,lat,lng FROM usuarios WHERE tipo='doctor'");
+
+// Obtener doctores junto con el nombre de la especialidad
+$stmt = $pdo->query("
+  SELECT u.id, u.nombres, u.apellidos, u.lat, u.lng, e.nombre AS especialidad
+  FROM usuarios u
+  LEFT JOIN especialidades e ON u.especialidad_id = e.id
+  WHERE u.tipo = 'doctor'
+");
+
 $docs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -43,9 +51,10 @@ $docs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <header class="d-flex justify-content-between align-items-center">
   <h2 class="m-0">Hola, <?= htmlspecialchars($_SESSION['usuario']['nombres']) ?></h2>
-  <div>
-    <a href="../logout.php" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
+  <div class="d-flex gap-2">
+    <a href="mi_historial.php" class="btn btn-light btn-sm">🗂 Mi historial</a>
     <a href="notificaciones.php" class="btn btn-light btn-sm">Notificaciones</a>
+    <a href="../logout.php" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
   </div>
 </header>
 
@@ -92,7 +101,6 @@ $docs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/main.js"></script>
 <script>
-
 if (navigator.geolocation) {
     navigator.geolocation.watchPosition(function (position) {
         let lat = position.coords.latitude;

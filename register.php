@@ -9,51 +9,67 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $edad = $_POST['edad'];
-    $especialidad_id = $_POST['especialidad_id'] ?? null;
-    $servicios_stmt = $pdo->prepare("SELECT nombre FROM servicios WHERE especialidad_id = ?");
-    $servicios_stmt->execute([$especialidad_id]);
-    $servicios_array = $servicios_stmt->fetchAll(PDO::FETCH_COLUMN);
-    $servicios = implode(', ', $servicios_array);
     $lat = $_POST['lat'];
     $lng = $_POST['lng'];
-    $sexo = $_POST['sexo'] ?? null;
-    $alergias = $_POST['alergias'] ?? null;
-    $enfermedades_previas = $_POST['enfermedades_previas'] ?? null;
-    $medicamentos = $_POST['medicamentos'] ?? null;
-    $antecedentes_familiares = $_POST['antecedentes_familiares'] ?? null;
-    $cirugias = $_POST['cirugias'] ?? null;
-    $otros_datos = $_POST['otros_datos'] ?? null;
 
-    $sql = "INSERT INTO usuarios (
-        tipo, nombres, apellidos, email, password, edad, especialidad, servicios, 
-        lat, lng, sexo, alergias, enfermedades_previas, medicamentos, 
-        antecedentes_familiares, cirugias, otros_datos
-    ) VALUES (
-        :tipo, :nombres, :apellidos, :email, :password, :edad, :especialidad, :servicios, 
-        :lat, :lng, :sexo, :alergias, :enfermedades_previas, :medicamentos, 
-        :antecedentes_familiares, :cirugias, :otros_datos
-    )";
+    if ($tipo === 'doctor') {
+        $especialidad_id = $_POST['especialidad_id'] ?? null;
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        ':tipo' => $tipo,
-        ':nombres' => $nombres,
-        ':apellidos' => $apellidos,
-        ':email' => $email,
-        ':password' => $password,
-        ':edad' => $edad,
-        ':especialidad' => $especialidad_id,
-        ':servicios' => $servicios,
-        ':lat' => $lat,
-        ':lng' => $lng,
-        ':sexo' => $sexo,
-        ':alergias' => $alergias,
-        ':enfermedades_previas' => $enfermedades_previas,
-        ':medicamentos' => $medicamentos,
-        ':antecedentes_familiares' => $antecedentes_familiares,
-        ':cirugias' => $cirugias,
-        ':otros_datos' => $otros_datos
-    ]);
+        $sql = "INSERT INTO usuarios (
+            tipo, nombres, apellidos, email, password, edad, especialidad_id, lat, lng
+        ) VALUES (
+            :tipo, :nombres, :apellidos, :email, :password, :edad, :especialidad_id, :lat, :lng
+        )";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':tipo' => $tipo,
+            ':nombres' => $nombres,
+            ':apellidos' => $apellidos,
+            ':email' => $email,
+            ':password' => $password,
+            ':edad' => $edad,
+            ':especialidad_id' => $especialidad_id,
+            ':lat' => $lat,
+            ':lng' => $lng
+        ]);
+
+    } elseif ($tipo === 'paciente') {
+        $sexo = in_array($_POST['sexo'] ?? '', ['femenino', 'masculino']) ? $_POST['sexo'] : null;
+        $alergias = $_POST['alergias'] ?? null;
+        $enfermedades_previas = $_POST['enfermedades_previas'] ?? null;
+        $medicamentos = $_POST['medicamentos'] ?? null;
+        $antecedentes_familiares = $_POST['antecedentes_familiares'] ?? null;
+        $cirugias = $_POST['cirugias'] ?? null;
+        $otros_datos = $_POST['otros_datos'] ?? null;
+
+        $sql = "INSERT INTO usuarios (
+            tipo, nombres, apellidos, email, password, edad, sexo, alergias, enfermedades_previas, medicamentos,
+            antecedentes_familiares, cirugias, otros_datos, lat, lng
+        ) VALUES (
+            :tipo, :nombres, :apellidos, :email, :password, :edad, :sexo, :alergias, :enfermedades_previas, :medicamentos,
+            :antecedentes_familiares, :cirugias, :otros_datos, :lat, :lng
+        )";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':tipo' => $tipo,
+            ':nombres' => $nombres,
+            ':apellidos' => $apellidos,
+            ':email' => $email,
+            ':password' => $password,
+            ':edad' => $edad,
+            ':sexo' => $sexo,
+            ':alergias' => $alergias,
+            ':enfermedades_previas' => $enfermedades_previas,
+            ':medicamentos' => $medicamentos,
+            ':antecedentes_familiares' => $antecedentes_familiares,
+            ':cirugias' => $cirugias,
+            ':otros_datos' => $otros_datos,
+            ':lat' => $lat,
+            ':lng' => $lng
+        ]);
+    }
 
     $_SESSION['exito'] = "Registro exitoso. Ahora puedes iniciar sesión.";
     header("Location: login.php");
@@ -275,6 +291,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         const camposPaciente = document.getElementById("camposPaciente");
         campos.style.display = tipo === "doctor" ? "block" : "none";
         camposPaciente.style.display = tipo === "doctor" ? "none" : "block";
+        const especialidad = document.getElementById("especialidad_id");
+
+        if (especialidad) {
+            if (tipo === "doctor") {
+                especialidad.setAttribute("required", "required");
+            } else {
+                especialidad.removeAttribute("required");
+            }
+        }
 
         if (tipo === "paciente") {
             if (navigator.geolocation) {
