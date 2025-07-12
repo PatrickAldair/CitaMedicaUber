@@ -1,16 +1,19 @@
 <?php
 session_start();
-if (!isset($_SESSION['id'])) {
-    exit("Sin sesión");
-}
-
 require_once '../db.php';
 
-$lat = $_POST['latitud'];
-$lon = $_POST['longitud'];
-$id = $_SESSION['id'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['usuario'])) {
+    $lat = $_POST['latitud'] ?? null;
+    $lng = $_POST['longitud'] ?? null;
+    $id = $_SESSION['usuario']['id'];
 
-$stmt = $conn->prepare("UPDATE usuarios SET latitud = ?, longitud = ? WHERE id = ?");
-$stmt->bind_param("ddi", $lat, $lon, $id);
-$stmt->execute();
+    if ($lat && $lng) {
+        $stmt = $pdo->prepare("UPDATE usuarios SET lat = ?, lng = ? WHERE id = ?");
+        $stmt->execute([$lat, $lng, $id]);
+
+        // 🧠 Muy importante: también actualizamos la sesión para que el mapa lo refleje al recargar
+        $_SESSION['usuario']['lat'] = $lat;
+        $_SESSION['usuario']['lng'] = $lng;
+    }
+}
 ?>

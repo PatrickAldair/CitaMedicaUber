@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
       mensaje.classList.remove("d-none");
 
       bootstrap.Modal.getInstance(document.getElementById("modalCita")).hide();
-
       form.reset();
 
       setTimeout(() => {
@@ -38,9 +37,11 @@ function initMap() {
   const lat0 = parseFloat(document.getElementById("map").dataset.lat);
   const lng0 = parseFloat(document.getElementById("map").dataset.lng);
   map = L.map("map").setView([lat0, lng0], 13);
+
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OSM"
   }).addTo(map);
+
   userMarker = L.marker([lat0, lng0]).addTo(map).bindPopup("Tú").openPopup();
 
   const doctors = JSON.parse(document.getElementById("map").dataset.doctores);
@@ -61,13 +62,32 @@ function initMap() {
   document.getElementById("filtro").onchange = () =>
     renderDoctors(document.getElementById("filtro").value);
   renderDoctors();
+
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(function(position) {
+      const newLat = position.coords.latitude;
+      const newLng = position.coords.longitude;
+
+      if (userMarker) {
+        userMarker.setLatLng([newLat, newLng]).bindPopup("Tú").openPopup();
+        map.setView([newLat, newLng]);
+      }
+
+      fetch("actualizar_ubicacion.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `latitud=${newLat}&longitud=${newLng}`
+      });
+    });
+  }
 }
 
 window.abrirModalCita = function (doctorId) {
   doctorSeleccionadoId = doctorId;
   document.getElementById("doctorId").value = doctorId;
-  document.getElementById("fechaHora").value = ""; 
+  document.getElementById("fechaHora").value = "";
   const modal = new bootstrap.Modal(document.getElementById("modalCita"));
   modal.show();
 };
-

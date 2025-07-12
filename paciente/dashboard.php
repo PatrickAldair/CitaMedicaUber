@@ -5,7 +5,12 @@ if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['tipo'] !== 'paciente')
 
 require '../db.php';
 
-// Obtener doctores junto con el nombre de la especialidad
+$stmtCoords = $pdo->prepare("SELECT lat, lng FROM usuarios WHERE id = ?");
+$stmtCoords->execute([$_SESSION['usuario']['id']]);
+$coords = $stmtCoords->fetch();
+$_SESSION['usuario']['lat'] = $coords['lat'];
+$_SESSION['usuario']['lng'] = $coords['lng'];
+
 $stmt = $pdo->query("
   SELECT u.id, u.nombres, u.apellidos, u.lat, u.lng, e.nombre AS especialidad
   FROM usuarios u
@@ -58,6 +63,7 @@ $docs = $stmt->fetchAll(PDO::FETCH_ASSOC);
   </div>
 </header>
 
+
 <div class="container">
   <div id="mensajeCita" class="alert alert-success text-center d-none" role="alert"></div>
   <div id="menu" class="mb-3">
@@ -100,23 +106,5 @@ $docs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../assets/js/main.js"></script>
-<script>
-if (navigator.geolocation) {
-    navigator.geolocation.watchPosition(function (position) {
-        let lat = position.coords.latitude;
-        let lon = position.coords.longitude;
-
-        fetch("actualizar_ubicacion.php", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: `latitud=${lat}&longitud=${lon}`
-        });
-    });
-} else {
-    alert("Tu navegador no soporta geolocalización.");
-}
-</script>
 </body>
 </html>

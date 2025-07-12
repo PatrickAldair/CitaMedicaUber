@@ -286,12 +286,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     function toggleCampos() {
-        const tipo = document.getElementById("tipo").value;
-        const campos = document.getElementById("camposDoctor");
+        const tipoSelect = document.getElementById("tipo");
+        const tipo = tipoSelect.value;
+        const form = document.querySelector("form");
+
+        form.reset();
+
+        tipoSelect.value = tipo;
+
+        const camposDoctor = document.getElementById("camposDoctor");
         const camposPaciente = document.getElementById("camposPaciente");
-        campos.style.display = tipo === "doctor" ? "block" : "none";
-        camposPaciente.style.display = tipo === "doctor" ? "none" : "block";
         const especialidad = document.getElementById("especialidad_id");
+
+        camposDoctor.style.display = tipo === "doctor" ? "block" : "none";
+        camposPaciente.style.display = tipo === "paciente" ? "block" : "none";
 
         if (especialidad) {
             if (tipo === "doctor") {
@@ -303,7 +311,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (tipo === "paciente") {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
+                navigator.geolocation.watchPosition(function(position) {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
                     initMap(lat, lng);
