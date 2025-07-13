@@ -27,9 +27,16 @@ $citas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div
         style="position: fixed; top: 0; width: 100%; background-color: #00aaff; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 1000;">
+
         <h2 style="margin: 0;">Dr. <?= htmlspecialchars($_SESSION['usuario']['nombres']) ?></h2>
-        <a href="../logout.php" class="btn btn-light btn-sm">Cerrar sesión</a>
+
+        <div class="d-flex gap-2">
+            <a href="pacientes_por_atender.php" class="btn btn-outline-light btn-sm">📋 Pacientes por Atender</a>
+            <a href="ver_calificaciones.php" class="btn btn-outline-light btn-sm">⭐ Ver Calificaciones</a>
+            <a href="../logout.php" class="btn btn-light btn-sm">Cerrar sesión</a>
+        </div>
     </div>
+
 
     <div class="container" style="max-width: 900px; margin-top: 30px;">
         <h3 style="margin-bottom: 20px; color: #007bff;">Citas Pendientes</h3>
