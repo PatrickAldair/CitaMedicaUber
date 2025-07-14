@@ -61,8 +61,8 @@ if (!$paciente) die("Paciente no encontrado.");
         style="position: fixed; top: 0; width: 100%; background-color: #00aaff; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 1000;">
         <h4 style="margin: 0;">Mi Historial Médico</h4>
         <div>
-            <a href="dashboard.php" class="btn btn-light btn-sm">Volver</a>
-            <button onclick="window.print()" class="btn btn-outline-light btn-sm">🖨️ Imprimir</button>
+            <button onclick="window.print()" class="btn btn-outline-light btn-s">🖨️ Imprimir</button>
+            <a href="dashboard.php" class="btn btn-outline-light btn-s">Volver</a>
         </div>
     </div>
 
@@ -87,9 +87,7 @@ if (!$paciente) die("Paciente no encontrado.");
                 <?php
       $sql_historial = "SELECT c.fecha, s.nombre AS servicio
                         FROM citas c
-                        JOIN usuarios d ON d.id = c.id_doctor
-                        JOIN especialidades e ON d.especialidad_id = e.id
-                        JOIN servicios s ON s.especialidad_id = e.id
+                        LEFT JOIN servicios s ON c.id_servicio = s.id
                         WHERE c.id_paciente = ? AND c.estado = 'aceptada'
                         ORDER BY c.fecha DESC";
       $stmt2 = $pdo->prepare($sql_historial);

@@ -95,7 +95,13 @@ $docs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <div class="modal-body">
                     <label for="fechaHora" class="form-label">Selecciona fecha y hora:</label>
-                    <input type="datetime-local" id="fechaHora" class="form-control" required>
+                    <input type="datetime-local" id="fechaHora" class="form-control mb-3" required>
+
+                    <label for="servicio" class="form-label">Selecciona el servicio:</label>
+                    <select id="servicio" class="form-select" required>
+                        <option value="">Cargando servicios...</option>
+                    </select>
+
                     <input type="hidden" id="doctorId">
                 </div>
                 <div class="modal-footer">
@@ -108,7 +114,8 @@ $docs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/main.js?v=<?= time() ?>"></script>
+
 </body>
 
 </html>

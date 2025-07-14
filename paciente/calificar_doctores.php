@@ -29,11 +29,23 @@ $citas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <title>Calificar Doctores</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    body {
+        background-color: #e6f7ff;
+        font-family: 'Segoe UI', sans-serif;
+    }
+    </style>
 </head>
 
-<body class="bg-light">
-    <div class="container mt-5">
-        <h2>Calificar Doctores</h2>
+<body>
+    <div
+        style="position: fixed; top: 0; width: 100%; background-color: #00aaff; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 1000;">
+        <h4 style="margin: 0;">Calificar Doctores</h4>
+        <div>
+            <a href="dashboard.php" class="btn btn-outline-light btn-s">Volver</a>
+        </div>
+    </div>
+    <div class="container mt-5 pt-5">
         <?php if (empty($citas)): ?>
         <div class="alert alert-info">No hay doctores que calificar en este momento</div>
         <?php else: ?>

@@ -5,13 +5,19 @@ document.addEventListener("DOMContentLoaded", () => {
   if (form) {
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
+
       const fecha = document.getElementById("fechaHora").value;
-      if (!fecha || !doctorSeleccionadoId) return;
+      const servicioId = document.getElementById("servicio").value;
+      if (!fecha || !doctorSeleccionadoId || !servicioId) return;
 
       const res = await fetch('cita.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_doctor: doctorSeleccionadoId, fecha })
+        body: JSON.stringify({
+          id_doctor: doctorSeleccionadoId,
+          fecha,
+          id_servicio: servicioId
+        })
       });
 
       const text = await res.text();
@@ -28,6 +34,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 4000);
     });
   }
+
+  // Escucha clics en botones "Pedir cita" (incluso los generados dinámicamente)
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.classList.contains("pedir-cita-btn")) {
+      const id = e.target.getAttribute("data-id");
+      if (id) abrirModalCita(parseInt(id));
+    }
+  });
 });
 
 let map, userMarker;
@@ -53,8 +67,10 @@ function initMap() {
     doctors.filter(d => !filter || d.especialidad === filter)
       .forEach(d => {
         const m = L.marker([d.lat, d.lng]).addTo(map);
-        m.bindPopup(`<strong>Dr. ${d.nombres} ${d.apellidos}</strong><br>${d.especialidad}<br>
-          <button class="btn btn-sm btn-primary mt-1" onclick="abrirModalCita(${d.id})">Pedir cita</button>`);
+        m.bindPopup(`
+          <strong>Dr. ${d.nombres} ${d.apellidos}</strong><br>${d.especialidad}<br>
+          <button class="btn btn-sm btn-primary mt-1 pedir-cita-btn" data-id="${d.id}">Pedir cita</button>
+        `);
         markers.push(m);
       });
   }
@@ -64,7 +80,7 @@ function initMap() {
   renderDoctors();
 
   if (navigator.geolocation) {
-    navigator.geolocation.watchPosition(function(position) {
+    navigator.geolocation.watchPosition(function (position) {
       const newLat = position.coords.latitude;
       const newLng = position.coords.longitude;
 
@@ -84,10 +100,37 @@ function initMap() {
   }
 }
 
-window.abrirModalCita = function (doctorId) {
+async function abrirModalCita(doctorId) {
+  console.log("abrirModalCita llamada con id:", doctorId);
+
   doctorSeleccionadoId = doctorId;
   document.getElementById("doctorId").value = doctorId;
   document.getElementById("fechaHora").value = "";
+
+  const servicioSelect = document.getElementById("servicio");
+  servicioSelect.innerHTML = '<option>Cargando servicios...</option>';
+
+  try {
+    const res = await fetch(`servicio.php?id=${doctorId}`);
+    const servicios = await res.json();
+    console.log("Servicios recibidos:", servicios);
+
+    if (!servicios.length) {
+      servicioSelect.innerHTML = '<option disabled>No hay servicios disponibles</option>';
+    } else {
+      servicioSelect.innerHTML = '';
+      servicios.forEach(serv => {
+        const opt = document.createElement('option');
+        opt.value = serv.id;
+        opt.textContent = serv.nombre;
+        servicioSelect.appendChild(opt);
+      });
+    }
+  } catch (err) {
+    console.error("Error al cargar servicios", err);
+    servicioSelect.innerHTML = '<option disabled>Error al cargar servicios</option>';
+  }
+
   const modal = new bootstrap.Modal(document.getElementById("modalCita"));
   modal.show();
-};
+}
