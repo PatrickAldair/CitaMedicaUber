@@ -51,8 +51,6 @@ $doctor = $stmt->fetch();
             <h5 class="text-center mb-4 text-primary">Total a pagar: <strong>S/.
                     <?= number_format($precio, 2) ?></strong></h5>
 
-            <!-- ... cabecera PHP como ya tienes ... -->
-
             <form action="procesar_pago.php" method="POST" id="formPago">
                 <input type="hidden" name="cita_id" value="<?= $cita_id ?>">
                 <input type="hidden" name="monto" value="<?= $precio ?>">
@@ -66,8 +64,6 @@ $doctor = $stmt->fetch();
                         <option value="efectivo">Efectivo</option>
                     </select>
                 </div>
-
-                <!-- Tarjeta -->
                 <div id="campos_tarjeta" class="mb-3" style="display: none;">
                     <label class="form-label">Número de Tarjeta</label>
                     <input type="text" name="tarjeta" id="tarjeta" class="form-control"
@@ -86,7 +82,6 @@ $doctor = $stmt->fetch();
                     </div>
                 </div>
 
-                <!-- Yape -->
                 <div id="campos_yape" style="display: none;">
                     <div class="alert alert-warning text-center">
                         Envía el monto al número Yape del doctor:<br>
@@ -102,7 +97,6 @@ $doctor = $stmt->fetch();
                     </div>
                 </div>
 
-                <!-- Efectivo -->
                 <div id="campos_efectivo" class="mb-3" style="display: none;">
                     <div class="alert alert-info text-center">
                         El pago se realizará en persona al momento de la cita.
