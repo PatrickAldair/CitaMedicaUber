@@ -21,7 +21,7 @@ if ($respuesta === 'rechazar') {
     exit();
 }
 
-if ($respuesta === 'aceptar') {o
+if ($respuesta === 'aceptar') {
     $stmt = $pdo->prepare("SELECT precio_propuesto FROM citas WHERE id = ? AND id_paciente = ?");
     $stmt->execute([$cita_id, $_SESSION['usuario']['id']]);
     $precio = $stmt->fetchColumn();

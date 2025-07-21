@@ -59,7 +59,11 @@ if (!$paciente) die("Paciente no encontrado.");
 
     <div
         style="position: fixed; top: 0; width: 100%; background-color: #00aaff; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 1000;">
-        <h4 style="margin: 0;">Mi Historial Médico</h4>
+        <div style="display: flex; align-items: center;">
+            <img src="../img/logo.jpg" alt="logo"
+                style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+            <h4 style="margin: 0;">Mi Historial Médico</h4>
+        </div>
         <div>
             <button onclick="window.print()" class="btn btn-outline-light btn-s">🖨️ Imprimir</button>
             <a href="dashboard.php" class="btn btn-outline-light btn-s">Volver</a>

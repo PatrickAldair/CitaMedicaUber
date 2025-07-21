@@ -23,6 +23,7 @@ if (!$paciente) die("Paciente no encontrado.");
     <meta charset="UTF-8">
     <title>Historial de <?= htmlspecialchars($paciente['nombres']) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <style>
     body {
         background-color: #e6f7ff;
@@ -67,12 +68,11 @@ if (!$paciente) die("Paciente no encontrado.");
             <h5 class="text-primary mb-3">Servicios Recibidos</h5>
             <ul class="list-group">
                 <?php
-      $sql_historial = "SELECT c.fecha, s.nombre AS servicio, u.nombres AS paciente
-                        FROM citas c
-                        JOIN servicios s ON c.id_servicio = s.id
-                        JOIN usuarios u ON u.id = c.id_paciente
-                        WHERE c.id_doctor = ? AND c.estado = 'aceptada'
-                        ORDER BY c.fecha DESC";
+                $sql_historial ="SELECT c.fecha, s.nombre AS servicio
+                                FROM citas c
+                                JOIN servicios s ON c.id_servicio = s.id
+                                WHERE c.id_paciente = ? AND c.estado = 'aceptada'
+                                ORDER BY c.fecha DESC";
       $stmt2 = $pdo->prepare($sql_historial);
       $stmt2->execute([$id_paciente]);
       $historial = $stmt2->fetchAll(PDO::FETCH_ASSOC);
